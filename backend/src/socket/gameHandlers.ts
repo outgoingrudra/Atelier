@@ -16,7 +16,8 @@ export function registerGameHandlers(io: TypedServer, socket: TypedSocket): void
     if (
       room.phase !== "lobby" ||
       room.hostId !== player.id ||
-      room.members.filter((m) => m.connected).length < 2
+      room.members.filter((m) => m.connected).length < 2 ||
+      room.members.some((m) => m.connected && m.id !== room.hostId && !m.ready)
     ) {
       return;
     }

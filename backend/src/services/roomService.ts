@@ -44,7 +44,7 @@ export function toRoomState(room: Room): RoomState {
     wordLength: room.settings.wordMode === "hidden" ? 0 : room.word.length,
     deadline: room.deadline,
     resultWord: room.phase === "result" || room.phase === "finished" ? room.word : null,
-    strokes: room.strokes,
+    strokes: room.activeStroke ? [...room.strokes, room.activeStroke] : room.strokes,
     chat: room.chat,
   };
 }
@@ -71,6 +71,7 @@ export function createRoom(name: string, socketId: string, rawSettings?: unknown
     round: 0,
     turn: 0,
     totalTurns: 0,
+    turnOrder: [],
     drawerId: null,
     word: "",
     options: [],
@@ -83,6 +84,7 @@ export function createRoom(name: string, socketId: string, rawSettings?: unknown
     transition: null,
     choiceTimer: null,
     disconnectTimers: new Map(),
+    cleanupTimer: null,
   };
 
   rooms.set(roomCode, room);
@@ -98,9 +100,11 @@ export function scheduleRoomCleanupIfEmpty(room: Room, clearTimers: (room: Room)
   if (room.members.some((m) => m.connected)) return false;
 
   clearTimers(room);
-  setTimeout(() => {
+  if (room.cleanupTimer) clearTimeout(room.cleanupTimer);
+  room.cleanupTimer = setTimeout(() => {
+    room.cleanupTimer = null;
     if (!room.members.some((m) => m.connected)) {
-      rooms.delete(room.code);
+      if (rooms.get(room.code) === room) rooms.delete(room.code);
     }
   }, 60_000);
   return true;

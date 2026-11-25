@@ -45,6 +45,16 @@ export function leaveRoom(io: TypedServer, socket: TypedSocket, immediate = true
   if (scheduleRoomCleanupIfEmpty(room, clearTimers)) {
     return;
   }
+  if (!immediate && room.phase === "lobby") {
+    const timer = setTimeout(() => {
+      room.disconnectTimers.delete(player.id);
+      if (!player.connected && room.phase === "lobby") {
+        room.members = room.members.filter(member => member.id !== player.id);
+        broadcastRoomState(io, room);
+      }
+    }, 60_000);
+    room.disconnectTimers.set(player.id, timer);
+  }
   if (room.drawerId === player.id && (room.phase === "drawing" || room.phase === "choosing")) {
     if (immediate) {
       endTurn(io, room);
@@ -59,6 +69,10 @@ export function leaveRoom(io: TypedServer, socket: TypedSocket, immediate = true
       }, 6000);
       room.disconnectTimers.set(player.id, graceTimer);
     }
+  }
+  if (room.phase === "drawing" && room.drawerId !== player.id) {
+    const guessers = room.members.filter(member => member.connected && member.id !== room.drawerId);
+    if (guessers.length > 0 && guessers.every(member => member.guessed)) endTurn(io, room);
   }
   broadcastRoomState(io, room);
 }
@@ -131,6 +145,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
 
     player.socketId = socket.id;
     player.connected = true;
+    if (room.cleanupTimer) { clearTimeout(room.cleanupTimer); room.cleanupTimer = null; }
     const pendingTimer = room.disconnectTimers.get(player.id);
     if (pendingTimer) {
       clearTimeout(pendingTimer);
@@ -196,6 +211,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
     room.round = 0;
     room.turn = 0;
     room.totalTurns = 0;
+    room.turnOrder = [];
     room.drawerId = null;
     room.word = "";
     room.options = [];

@@ -44,6 +44,7 @@ export function endTurn(io: TypedServer, room: Room): void {
   clearTimers(room);
   room.phase = "result";
   room.deadline = null;
+  if (room.activeStroke) room.strokes = [...room.strokes, room.activeStroke].slice(-250);
   room.activeStroke = null;
   broadcastChatMessage(
     io,
@@ -97,9 +98,15 @@ export function startTurn(io: TypedServer, room: Room): void {
     return;
   }
 
-  const drawer = eligible[room.turn % eligible.length];
-  room.turn += 1;
-  room.round = Math.ceil(room.turn / eligible.length);
+  // Keep the original seats stable; disconnected seats are skipped, never reordered.
+  let drawer: Member | undefined;
+  while (room.turn < room.totalTurns && !drawer) {
+    const id = room.turnOrder[room.turn % room.turnOrder.length];
+    room.turn += 1;
+    drawer = eligible.find((member) => member.id === id);
+  }
+  if (!drawer) { finishGame(io, room); return; }
+  room.round = Math.ceil(room.turn / room.turnOrder.length);
   room.drawerId = drawer.id;
   room.phase = "choosing";
   room.word = "";
@@ -147,7 +154,8 @@ export function resumeTimers(io: TypedServer, room: Room): void {
 export function startGame(io: TypedServer, room: Room): void {
   for (const m of room.members) m.score = 0;
   room.turn = 0;
-  room.totalTurns = room.settings.rounds * room.members.filter((m) => m.connected).length;
+  room.turnOrder = room.members.filter((m) => m.connected).map((m) => m.id);
+  room.totalTurns = room.settings.rounds * room.turnOrder.length;
   startTurn(io, room);
 }
 
@@ -158,6 +166,8 @@ export function handleGuess(
   player: Member,
   text: string
 ): void {
+  if (room.phase !== "drawing" || player.guessed || player.id === room.drawerId) return;
+  if (!room.deadline || Date.now() >= room.deadline) { endTurn(io, room); return; }
   if (normalize(text) === normalize(room.word)) {
     player.guessed = true;
     const points = calculateGuessPoints(room.deadline, room.settings.drawTime);

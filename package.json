@@ -14,6 +14,7 @@
     "server:build": "npm --workspace=backend run build",
     "server:start": "npm --workspace=backend run start",
     "test:smoke": "node scripts/smoke.mjs",
+    "test:regression": "npm run server:build && node --test scripts/regression.mjs",
     "typecheck": "npm --workspace=frontend run typecheck && npm --workspace=backend run typecheck"
   }
 }

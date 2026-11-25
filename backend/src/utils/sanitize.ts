@@ -22,6 +22,7 @@ export function safeText(text: unknown): string {
 }
 
 export function clamp(n: unknown, min: number, max: number, fallback: number): number {
+  if (typeof n !== "number" && typeof n !== "string") return fallback;
   return Number.isFinite(Number(n))
     ? Math.max(min, Math.min(max, Math.round(Number(n))))
     : fallback;

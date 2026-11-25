@@ -49,7 +49,7 @@ Deploy `frontend/` and `backend/` as two independent services:
 
 ## Game flow
 
-Create or join a private room → host starts → drawer selects a word → drawer draws while others guess → server awards points → next drawer → final leaderboard. Each configured round gives every active player one drawing turn.
+Create or join a private room → guests ready up → host starts → drawer selects a word → drawer draws while others guess → server awards points → next drawer → final leaderboard. Each configured round gives every active player one drawing turn.
 
 The browser stores normalized points (0–1) rather than pixels, so strokes scale with canvas size. The drawer paints locally immediately and sends bounded stroke points over Socket.IO. The server checks the sender is the current drawer, keeps the stroke for reconnects, and relays it. Guess matching happens only on the server; the word is sent only to the drawer until the turn ends.
 
@@ -59,4 +59,6 @@ See [work.md](work.md) for diagrams, UI decisions, performance priorities, and t
 
 - Live rooms are in one server process. Horizontal scaling would require shared room state and a Socket.IO adapter.
 - The game uses room codes rather than accounts or email.
-- Public matchmaking and moderation are optional assignment features and are not part of the first implementation.
+- Public matchmaking is not implemented. Hosts can remove players from their room.
+
+Run `npm run test:regression` for deterministic logic regression tests.

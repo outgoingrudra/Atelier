@@ -14,6 +14,7 @@ export type Room = {
   round: number;
   turn: number;
   totalTurns: number;
+  turnOrder: string[];
   drawerId: string | null;
   word: string;
   options: string[];
@@ -26,4 +27,5 @@ export type Room = {
   transition: NodeJS.Timeout | null;
   choiceTimer: NodeJS.Timeout | null;
   disconnectTimers: Map<string, NodeJS.Timeout>;
+  cleanupTimer: NodeJS.Timeout | null;
 };

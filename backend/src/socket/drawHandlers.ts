@@ -23,7 +23,10 @@ export function registerDrawHandlers(io: TypedServer, socket: TypedSocket): void
     const { room, player } = found;
     if (room.phase !== "drawing" || room.drawerId !== player.id || !safePoint(value)) return;
 
-    if (room.activeStroke) room.strokes.push(room.activeStroke);
+    if (room.activeStroke) {
+      room.strokes.push(room.activeStroke);
+      room.strokes = room.strokes.slice(-250);
+    }
     const stroke: Stroke = {
       id: typeof value.id === "string" ? value.id.slice(0, 50) : randomUUID(),
       color:
@@ -50,7 +53,7 @@ export function registerDrawHandlers(io: TypedServer, socket: TypedSocket): void
       !safePoint(value) ||
       !active ||
       active.id !== value.id ||
-      active.points.length >= 3000
+      active.points.length >= 1000
     ) {
       return;
     }
@@ -59,15 +62,14 @@ export function registerDrawHandlers(io: TypedServer, socket: TypedSocket): void
   });
 
   socket.on("draw_end", (value: DrawEndPayload) => {
-    if (!socketLimiter.allow(socket.id, "draw_action", 25, 1_000)) return;
     const found = findMemberBySocket(socket.id);
     if (!found) return;
     const { room, player } = found;
     const active = room.activeStroke;
-    if (room.drawerId !== player.id || !active || active.id !== value?.id) return;
+    if (room.phase !== "drawing" || room.drawerId !== player.id || !active || active.id !== value?.id) return;
 
     if (Array.isArray(value.points) && value.points.length > 0) {
-      const validPoints = value.points.filter(safePoint).slice(0, 3000);
+      const validPoints = value.points.slice(0, 1000).filter(safePoint);
       if (validPoints.length > 0) {
         active.points = validPoints.map((p) => ({ x: p.x, y: p.y }));
       }

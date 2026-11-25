@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import { io } from "socket.io-client";
 
 if (process.env.SELF_HOST === "1") {
+  process.env.PORT = process.env.TEST_PORT || "4101";
+  process.env.MONGODB_URI = "";
   await import("../backend/dist/index.js");
   await new Promise(resolve => setTimeout(resolve, 500));
 }
-const url = process.env.SOCKET_URL || "http://127.0.0.1:4000";
+const url = process.env.SOCKET_URL || `http://127.0.0.1:${process.env.SELF_HOST === "1" ? process.env.PORT : "4000"}`;
 const host = io(url, { transports: ["websocket"] });
 const guest = io(url, { transports: ["websocket"] });
 host.on("connect_error", error => console.error("Host connection:", error.message));
@@ -28,6 +30,9 @@ try {
   assert.equal(created.ok, true);
   const joined = await ack(guest, "join_room", { code: created.code, name: "Guesser" });
   assert.equal(joined.ok, true);
+  const ready = waitFor(host, "room_state", state => state.players.some(player => player.id === joined.playerId && player.ready));
+  guest.emit("toggle_ready");
+  await ready;
   const optionsPromise = wait(host, "word_options");
   host.emit("start_game");
   const options = await optionsPromise;
