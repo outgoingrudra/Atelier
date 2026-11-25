@@ -1,0 +1,19 @@
+{
+  "name": "atelier-draw",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm --workspace=frontend run dev",
+    "build": "npm --workspace=frontend run build",
+    "start": "npm --workspace=frontend run start",
+    "server:dev": "npm --workspace=backend run dev",
+    "server:build": "npm --workspace=backend run build",
+    "server:start": "npm --workspace=backend run start",
+    "test:smoke": "node scripts/smoke.mjs",
+    "typecheck": "npm --workspace=frontend run typecheck && npm --workspace=backend run typecheck"
+  }
+}

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 540" role="img" aria-labelledby="title desc">
+  <title id="title">Game and turn flow</title>
+  <desc id="desc">Players create or join a lobby, start a game, choose a word, draw and guess, see turn results, rotate the drawer, and finish at the leaderboard.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#ba754c" stroke-width="2"/></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #efeae1; }
+      .heading { font-size: 32px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .small { font-size: 18px; fill: #bdb5aa; }
+      .box { fill: #242321; stroke: #766253; stroke-width: 2; rx: 12; }
+      .line { stroke: #ba754c; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="540" fill="#171716"/>
+  <text x="50" y="65" class="heading">From lobby to winner</text>
+  <rect x="50" y="125" width="220" height="105" class="box"/>
+  <text x="72" y="169" class="label">Create / join</text>
+  <text x="72" y="200" class="small">Room code or link</text>
+  <rect x="340" y="125" width="220" height="105" class="box"/>
+  <text x="362" y="169" class="label">Lobby</text>
+  <text x="362" y="200" class="small">Host starts game</text>
+  <rect x="630" y="125" width="220" height="105" class="box"/>
+  <text x="652" y="169" class="label">Word choice</text>
+  <text x="652" y="200" class="small">Drawer only</text>
+  <rect x="850" y="320" width="220" height="105" class="box"/>
+  <text x="872" y="364" class="label">Draw + guess</text>
+  <text x="872" y="395" class="small">Timed live turn</text>
+  <rect x="560" y="320" width="220" height="105" class="box"/>
+  <text x="582" y="364" class="label">Turn result</text>
+  <text x="582" y="395" class="small">Word + points</text>
+  <rect x="190" y="320" width="280" height="105" class="box"/>
+  <text x="212" y="364" class="label">Final leaderboard</text>
+  <text x="212" y="395" class="small">After all drawing turns</text>
+  <path d="M273 177 H335" class="line"/>
+  <path d="M563 177 H625" class="line"/>
+  <path d="M853 177 H960 V315" class="line"/>
+  <path d="M847 372 H785" class="line"/>
+  <path d="M675 316 V265 H740 V235" class="line"/>
+  <text x="584" y="267" class="small">next drawer</text>
+  <path d="M557 372 H475" class="line"/>
+  <text x="482" y="454" class="small">all configured rounds complete</text>
+</svg>

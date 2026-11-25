@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">Drawing game architecture</title>
+  <desc id="desc">Browsers communicate with a single Socket.IO server. The server owns live rooms and accesses MongoDB for persistent words and completed matches.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#ba754c" stroke-width="2"/></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #efeae1; }
+      .small { font-size: 19px; fill: #bdb5aa; }
+      .label { font-size: 24px; font-weight: 700; }
+      .heading { font-size: 32px; font-weight: 700; }
+      .box { fill: #242321; stroke: #766253; stroke-width: 2; rx: 12; }
+      .line { stroke: #ba754c; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="620" fill="#171716"/>
+  <text x="50" y="66" class="heading">One authoritative game server</text>
+  <text x="50" y="98" class="small">Fast live state in memory · persistent records in MongoDB</text>
+
+  <rect x="50" y="155" width="240" height="135" class="box"/>
+  <text x="75" y="197" class="label">Next.js drawer</text>
+  <text x="75" y="230" class="small">Local canvas preview</text>
+  <text x="75" y="260" class="small">Tools + secret word</text>
+
+  <rect x="50" y="360" width="240" height="135" class="box"/>
+  <text x="75" y="402" class="label">Next.js guessers</text>
+  <text x="75" y="435" class="small">Canvas + hints</text>
+  <text x="75" y="465" class="small">Guess + chat input</text>
+
+  <rect x="410" y="195" width="300" height="260" class="box"/>
+  <text x="442" y="240" class="label">Express + Socket.IO</text>
+  <text x="442" y="283" class="small">Room manager</text>
+  <text x="442" y="316" class="small">Turn + score rules</text>
+  <text x="442" y="349" class="small">Word privacy</text>
+  <text x="442" y="382" class="small">Current strokes</text>
+  <text x="442" y="415" class="small">Server timer</text>
+
+  <rect x="835" y="255" width="235" height="140" class="box"/>
+  <text x="861" y="300" class="label">MongoDB</text>
+  <text x="861" y="336" class="small">Word banks</text>
+  <text x="861" y="367" class="small">Match summaries</text>
+
+  <path d="M292 220 H375 V260 H407" class="line"/>
+  <path d="M407 295 H375 V255 H293" class="line"/>
+  <path d="M292 420 H374 V375 H407" class="line"/>
+  <path d="M407 410 H375 V455 H293" class="line"/>
+  <path d="M713 320 H830" class="line"/>
+  <path d="M830 355 H714" class="line"/>
+
+  <text x="315" y="183" class="small">strokes</text>
+  <text x="311" y="485" class="small">guesses</text>
+  <text x="739" y="233" class="small">selective reads/writes</text>
+  <text x="50" y="565" class="small">The server validates actions before forwarding them. MongoDB is outside the live drawing path.</text>
+</svg>
