@@ -59,16 +59,24 @@ export function registerDrawHandlers(io: TypedServer, socket: TypedSocket): void
   });
 
   socket.on("draw_end", (value: DrawEndPayload) => {
+    if (!socketLimiter.allow(socket.id, "draw_action", 25, 1_000)) return;
     const found = findMemberBySocket(socket.id);
     if (!found) return;
     const { room, player } = found;
     const active = room.activeStroke;
     if (room.drawerId !== player.id || !active || active.id !== value?.id) return;
 
+    if (Array.isArray(value.points) && value.points.length > 0) {
+      const validPoints = value.points.filter(safePoint).slice(0, 3000);
+      if (validPoints.length > 0) {
+        active.points = validPoints.map((p) => ({ x: p.x, y: p.y }));
+      }
+    }
+
     room.strokes.push(active);
     room.strokes = room.strokes.slice(-250);
     room.activeStroke = null;
-    socket.to(room.code).emit("draw_end", value);
+    socket.to(room.code).emit("draw_end", { id: active.id, points: active.points });
   });
 
   socket.on("draw_undo", () => {

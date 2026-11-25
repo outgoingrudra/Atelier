@@ -46,7 +46,19 @@ export function leaveRoom(io: TypedServer, socket: TypedSocket, immediate = true
     return;
   }
   if (room.drawerId === player.id && (room.phase === "drawing" || room.phase === "choosing")) {
-    endTurn(io, room);
+    if (immediate) {
+      endTurn(io, room);
+    } else {
+      const existingTimer = room.disconnectTimers.get(player.id);
+      if (existingTimer) clearTimeout(existingTimer);
+      const graceTimer = setTimeout(() => {
+        room.disconnectTimers.delete(player.id);
+        if (!player.connected && room.drawerId === player.id && (room.phase === "drawing" || room.phase === "choosing")) {
+          endTurn(io, room);
+        }
+      }, 6000);
+      room.disconnectTimers.set(player.id, graceTimer);
+    }
   }
   broadcastRoomState(io, room);
 }
@@ -119,6 +131,11 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
 
     player.socketId = socket.id;
     player.connected = true;
+    const pendingTimer = room.disconnectTimers.get(player.id);
+    if (pendingTimer) {
+      clearTimeout(pendingTimer);
+      room.disconnectTimers.delete(player.id);
+    }
     if (!existing) room.members.push(player);
     if (!room.hostId) room.hostId = player.id;
 

@@ -68,7 +68,19 @@ export default function CanvasBoard({ socket, canDraw, strokes, phase }: Props) 
       currentRef.current.points.push({ x: point.x, y: point.y });
       paintTail(currentRef.current);
     };
-    const onEnd = () => { if (currentRef.current) strokesRef.current.push(currentRef.current); currentRef.current = null; };
+    const onEnd = (payload: { id?: string; points?: Point[] }) => {
+      if (!currentRef.current) return;
+      let needsRedraw = false;
+      if (Array.isArray(payload?.points) && payload.points.length > 0) {
+        if (payload.points.length !== currentRef.current.points.length) {
+          currentRef.current.points = payload.points;
+          needsRedraw = true;
+        }
+      }
+      strokesRef.current.push(currentRef.current);
+      currentRef.current = null;
+      if (needsRedraw) redraw();
+    };
     const onState = (next: Stroke[]) => { strokesRef.current = next; currentRef.current = null; redraw(); };
     socket.on("draw_start", onStart); socket.on("draw_move", onMove); socket.on("draw_end", onEnd); socket.on("canvas_state", onState);
     return () => { socket.off("draw_start", onStart); socket.off("draw_move", onMove); socket.off("draw_end", onEnd); socket.off("canvas_state", onState); };
@@ -95,7 +107,10 @@ export default function CanvasBoard({ socket, canDraw, strokes, phase }: Props) 
   }
   function pointerUp() {
     if (!currentRef.current) return;
-    strokesRef.current.push(currentRef.current); socket.emit("draw_end", { id: currentRef.current.id }); currentRef.current = null;
+    const completed = currentRef.current;
+    strokesRef.current.push(completed);
+    socket.emit("draw_end", { id: completed.id, points: completed.points.slice(0, 3000) });
+    currentRef.current = null;
   }
 
   return <div className="board-wrap">

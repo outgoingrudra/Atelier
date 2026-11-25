@@ -82,6 +82,7 @@ export function createRoom(name: string, socketId: string, rawSettings?: unknown
     timer: null,
     transition: null,
     choiceTimer: null,
+    disconnectTimers: new Map(),
   };
 
   rooms.set(roomCode, room);

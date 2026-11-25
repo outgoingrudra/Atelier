@@ -23,6 +23,8 @@ export function clearTimers(room: Room): void {
   if (room.timer) clearInterval(room.timer);
   if (room.transition) clearTimeout(room.transition);
   if (room.choiceTimer) clearTimeout(room.choiceTimer);
+  for (const timer of room.disconnectTimers.values()) clearTimeout(timer);
+  room.disconnectTimers.clear();
   room.timer = room.transition = room.choiceTimer = null;
 }
 

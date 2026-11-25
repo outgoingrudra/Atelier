@@ -39,11 +39,22 @@ export default function RoomPage() {
 
   useEffect(() => {
     const s = getSocket(); setSocket(s); setConnected(s.connected);
-    let saved: Session | null = null;
-    try { saved = JSON.parse(sessionStorage.getItem(`atelier-session-${code}`) || "null"); } catch { saved = null; }
-    if (saved) { setSession(saved); setName(saved.name); connectRoom(s, saved); }
-    else setName(localStorage.getItem("atelier-name") || "");
-    const onConnect = () => { setConnected(true); if (saved) connectRoom(s, saved); };
+    const readSaved = (): Session | null => {
+      try { return JSON.parse(sessionStorage.getItem(`atelier-session-${code}`) || "null"); } catch { return null; }
+    };
+    const initial = readSaved();
+    if (initial) {
+      setSession(initial);
+      setName(initial.name);
+      if (s.connected) connectRoom(s, initial);
+    } else {
+      setName(localStorage.getItem("atelier-name") || "");
+    }
+    const onConnect = () => {
+      setConnected(true);
+      const current = readSaved();
+      if (current) connectRoom(s, current);
+    };
     const onDisconnect = () => setConnected(false);
     const onRoom = (value: RoomState) => setRoom(value);
     const onOptions = (value: string[]) => setOptions(value);

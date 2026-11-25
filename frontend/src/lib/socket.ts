@@ -11,7 +11,7 @@ export function getSocket(): AppSocket {
     socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000", {
       autoConnect: false,
       reconnection: true,
-      transports: ["websocket"],
+      transports: ["websocket", "polling"],
     });
   }
   if (!socket.connected) socket.connect();

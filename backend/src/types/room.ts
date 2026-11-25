@@ -25,4 +25,5 @@ export type Room = {
   timer: NodeJS.Timeout | null;
   transition: NodeJS.Timeout | null;
   choiceTimer: NodeJS.Timeout | null;
+  disconnectTimers: Map<string, NodeJS.Timeout>;
 };

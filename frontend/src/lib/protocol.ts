@@ -73,7 +73,7 @@ export type DrawStartPayload = {
   tool?: string;
 };
 export type DrawMovePayload = { id?: string; x?: number; y?: number };
-export type DrawEndPayload = { id?: string };
+export type DrawEndPayload = { id?: string; points?: Point[] };
 export type GuessFeedback = { correct: boolean; points: number };
 
 export interface ClientToServerEvents {
