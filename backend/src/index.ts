@@ -9,6 +9,7 @@ import { registerSocketHandlers } from "./socket/index.js";
 import type { ClientToServerEvents, ServerToClientEvents } from "./types/protocol.js";
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(express.json({ limit: "16kb" }));
 app.use(createHttpRateLimiter(60, 60_000));
 app.get("/health", (_req, res) => {
@@ -18,6 +19,7 @@ app.get("/health", (_req, res) => {
 const httpServer = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: socketCorsOptions,
+  transports: ["websocket", "polling"],
   maxHttpBufferSize: config.maxHttpBufferSize,
 });
 
