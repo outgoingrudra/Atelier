@@ -87,3 +87,9 @@ See [work.md](work.md) for diagrams, UI decisions, performance priorities, and t
 - The game uses room codes rather than accounts or email.
 - Public matchmaking is not implemented. Hosts can remove players from their room.
 
+
+## Health monitoring and audio
+
+`GET /health` returns HTTP 200 with `ok`, uptime in seconds, and the active room count. It performs no database queries and sends `Cache-Control: no-store`. Set an external HTTP monitor to request `https://<your-backend>.onrender.com/health` every five minutes and expect status 200. Set Render's health check path to `/health` as well. The external monitor must be configured separately; an internal timer cannot wake a sleeping server. Free hosting can still restart or hit usage limits.
+
+In-room SOUND ON/OFF enables short synthesized cues for turn start, correct guesses, and game completion. Audio starts only after clicking the control and is muted by default. No audio assets are downloaded.

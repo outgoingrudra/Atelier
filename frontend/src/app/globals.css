@@ -1555,3 +1555,35 @@ select:focus-visible {
     animation: none !important;
   }
 }
+
+/* Arcade accents retain the warm drawing-paper canvas. */
+:root {
+  --bg: #111513;
+  --surface: #1b2420;
+  --surface2: #26332b;
+  --line: #405247;
+  --copper: #edb84d;
+  --copper-light: #ffd478;
+}
+body { background-image: radial-gradient(#ffffff08 1px, transparent 1px); background-size: 24px 24px; }
+.entry-card, .lobby-aside { border-top: 3px solid var(--copper); }
+.primary-button { border-radius: 5px; box-shadow: 0 4px 0 #866024; font-weight: 800; letter-spacing: .06em; }
+.primary-button:not(:disabled):active { transform: translateY(3px); box-shadow: 0 1px 0 #866024; }
+.hero-copy h1, .lobby-main h1 { font-weight: 800; letter-spacing: -.055em; }
+.mode-switch button.active { box-shadow: inset 0 -3px var(--copper); }
+.lobby-player { border-left: 3px solid var(--line); border-radius: 5px; }
+.lobby-player:not(.empty) { border-left-color: #8fcba0; }
+.avatar, .score-avatar { border-radius: 6px; font-weight: 800; }
+.game-topline { border-bottom: 2px solid var(--line); padding-bottom: 16px; }
+.timer { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 16px; }
+.timer strong { font-variant-numeric: tabular-nums; color: var(--copper-light); }
+.timer.urgent { border-color: #ff826a; }
+.score-row { border-radius: 4px; margin-bottom: 5px; }
+.score-row.drawing { border-left: 3px solid var(--copper); background: #edb84d16; }
+.score-row strong { color: var(--copper-light); font-variant-numeric: tabular-nums; }
+.word-bar { border-top: 3px solid var(--copper); }
+.word-options button { border-radius: 5px; border-bottom: 3px solid var(--copper); }
+.sound-control { position: fixed; bottom: 14px; right: 16px; z-index: 30; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); color: var(--text); font: 700 11px 'DM Sans', sans-serif; letter-spacing: .08em; padding: 9px 12px; }
+.sound-control[aria-pressed="true"] { color: var(--copper-light); border-color: var(--copper); }
+.room-shell { padding-bottom: 64px; }
+@media (max-width: 600px) { .timer { padding: 7px 10px; } }

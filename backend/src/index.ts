@@ -13,7 +13,8 @@ app.set("trust proxy", 1);
 app.use(express.json({ limit: "16kb" }));
 app.use(createHttpRateLimiter(60, 60_000));
 app.get("/health", (_req, res) => {
-  res.json({ ok: true, rooms: getRoomCount() });
+  res.set("Cache-Control", "no-store");
+  res.json({ ok: true, uptime: Math.floor(process.uptime()), rooms: getRoomCount() });
 });
 
 const httpServer = createServer(app);

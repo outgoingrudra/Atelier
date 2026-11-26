@@ -11,6 +11,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import CanvasBoard from "@/components/CanvasBoard";
 import Brand from "@/components/Brand";
+import GameAudio from "@/components/GameAudio";
 import { getSocket, type AppSocket } from "@/lib/socket";
 import {
   Ack,
@@ -254,6 +255,7 @@ export default function RoomPage() {
 
   return (
     <main className="room-shell">
+      <GameAudio room={room} />
       {error && (
         <p className="form-error" role="alert">
           {error}
